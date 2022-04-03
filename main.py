@@ -1,15 +1,13 @@
 from datetime import datetime
-import os
 from fastapi import FastAPI, Request
 from google.cloud import ndb
-from config import Settings
 from movie import Movie
 from movie_dto import MovieDto
 from movie_repository import MovieRepository
+from dotenv import load_dotenv
 
-settings = Settings()
+load_dotenv()
 app = FastAPI()
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = settings.service_account_path
 client = ndb.Client()
 
 @app.middleware("http")
