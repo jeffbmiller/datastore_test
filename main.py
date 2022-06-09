@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from google.cloud import ndb
@@ -9,12 +10,16 @@ from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import auth
 from user import User
+import requests
+import json
 
 from user_repository import UserRepository
 
 load_dotenv()
 app = FastAPI()
 client = ndb.Client()
+
+API_KEY = os.environ.get("API_KEY")
 
 default_app = firebase_admin.initialize_app()
 
@@ -70,3 +75,17 @@ async def get_movies(movie_dto: MovieDto, user: User = Depends(get_user)):
     movie = repo.save(movie)
     dto = MovieDto.from_entity(movie)
     return dto
+
+@app.get("/token")
+async def get_token(email, password):
+    url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={API_KEY}"
+    data = {"email": email,
+            "password": password,
+            "returnSecureToken": True
+            }
+    result = requests.post(url, json=data)
+    if result.ok:
+            content = json.loads(result.content)
+            return content['idToken']
+    else:
+        raise Exception("Unable to Authorize user")
