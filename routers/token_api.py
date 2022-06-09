@@ -7,7 +7,7 @@ API_KEY = os.environ.get("API_KEY")
 
 router = APIRouter(
     prefix="/token",
-    tags=["token"],
+    tags=[],
     dependencies=[],
     responses={404: {"description": "Not found"}},
 )

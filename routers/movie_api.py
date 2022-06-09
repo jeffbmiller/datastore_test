@@ -8,7 +8,7 @@ from movie_repository import MovieRepository
 
 router = APIRouter(
     prefix="/movie",
-    tags=["movie"],
+    tags=[],
     dependencies=[Depends(middleware.get_user)],
     responses={404: {"description": "Not found"}},
 )
